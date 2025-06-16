@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: socialscale-postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: socialscale
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: socialscale
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - socialscale-net
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    container_name: socialscale-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redisdata:/data
+    networks:
+      - socialscale-net
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+
+networks:
+  socialscale-net:
+    driver: bridge
