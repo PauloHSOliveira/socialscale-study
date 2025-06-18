@@ -22,27 +22,38 @@ export class PrismaPostRepository implements PostRepository {
   }
 
   async findWithPagination(limit: number, cursor?: string): Promise<PostWithPagination> {
-    const queryOptions: Prisma.PostFindManyArgs = {
-      orderBy: { createdAt: "desc" },
-      take: limit + 1,
-    };
+    try {
+      const queryOptions: Prisma.PostFindManyArgs = {
+        orderBy: { createdAt: "desc" },
+        take: limit + 1,
+        select: {
+          id: true,
+          content: true,
+          authorId: true,
+          createdAt: true,
+        },
+      };
 
-    if (cursor) {
-      queryOptions.cursor = { id: cursor };
-      queryOptions.skip = 1;
-    }
-
-    const posts = await this.prisma.post.findMany(queryOptions);
-
-    let nextCursor: string | undefined = undefined;
-    if (posts.length > limit) {
-      const lastPost = posts.pop();
-      if (lastPost) {
-        nextCursor = lastPost.id;
+      if (cursor) {
+        queryOptions.cursor = { id: cursor };
+        queryOptions.skip = 1;
       }
-    }
 
-    return { posts, nextCursor };
+      const posts = await this.prisma.post.findMany(queryOptions);
+
+      let nextCursor: string | undefined = undefined;
+      if (posts.length > limit) {
+        const lastPost = posts.pop();
+        if (lastPost) {
+          nextCursor = lastPost.id;
+        }
+      }
+
+      return { posts, nextCursor };
+    } catch (error) {
+      console.error("Database query failed:", error);
+      throw error;
+    }
   }
 
   async delete(id: string): Promise<void> {

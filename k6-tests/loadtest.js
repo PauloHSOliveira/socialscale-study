@@ -3,14 +3,15 @@ import http from "k6/http";
 
 export const options = {
   stages: [
-    { duration: "30s", target: 20 },
-    { duration: "1m", target: 50 },
-    { duration: "2m", target: 100 },
-    { duration: "30s", target: 0 },
+    { duration: "1m", target: 100 }, // Ramp up to 100 VUs in 1 minute
+    { duration: "2m", target: 500 }, // Scale to 500 VUs in 2 minutes
+    { duration: "3m", target: 1000 }, // Peak at 1000 VUs for 3 minutes
+    { duration: "2m", target: 500 }, // Scale back down to 500 VUs
+    { duration: "1m", target: 0 }, // Ramp down to 0
   ],
   thresholds: {
-    http_req_duration: [{ threshold: "p(95)<2000", abortOnFail: false }],
-    http_req_failed: ["rate<0.02"],
+    http_req_duration: [{ threshold: "p(95)<3000", abortOnFail: false }], // Increased threshold for higher load
+    http_req_failed: ["rate<0.05"], // Slightly more lenient failure rate for high load
   },
 };
 

@@ -10,7 +10,7 @@ import type { CacheService } from "../../domain/services/CacheService";
 import type { Logger } from "../../domain/services/Logger";
 import type { RateLimitService } from "../../domain/services/RateLimitService";
 import { BcryptAuthService } from "../auth/BcryptAuthService";
-import { WinstonLogger } from "../logger/WinstonLogger";
+import { createLogger } from "../logger/LoggerFactory";
 import { RedisRateLimitService } from "../rate-limit/RedisRateLimitService";
 import { container } from "./Container";
 
@@ -25,6 +25,6 @@ export function registerServices(): void {
   container.registerSingleton<AuthService>("AuthService", BcryptAuthService);
   container.registerSingleton<RateLimitService>("RateLimitService", RedisRateLimitService);
 
-  // Logger
-  container.registerSingleton<Logger>("Logger", WinstonLogger);
+  // Logger - Factory function registration
+  container.registerSingleton<Logger>("Logger", () => createLogger());
 }

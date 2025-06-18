@@ -17,7 +17,11 @@ export class GetPostsUseCase {
     }
 
     const result = await this.postRepository.findWithPagination(limit, cursor);
-    await this.cacheService.set(cacheKey, result, 10);
+
+    // Extended cache TTL for better performance under load
+    const cacheTTL = cursor ? 120 : 60; // 2min for paginated, 1min for first page
+    await this.cacheService.set(cacheKey, result, cacheTTL);
+
     return result;
   }
 }
