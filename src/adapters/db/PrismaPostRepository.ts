@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import type { CreatePostData, Post, PostWithPagination } from "../../domain/entities/Post";
 import type { PostRepository } from "../../domain/repositories/PostRepository";
 import { getDatabaseClient } from "../../infrastructure/database/PrismaClient";
+import { logger } from "../../infrastructure/logger/Logger";
 
 export class PrismaPostRepository implements PostRepository {
   private prisma = getDatabaseClient();
@@ -51,7 +52,7 @@ export class PrismaPostRepository implements PostRepository {
 
       return { posts, nextCursor };
     } catch (error) {
-      console.error("Database query failed:", error);
+      logger.error("Database query failed:", error);
       throw error;
     }
   }
