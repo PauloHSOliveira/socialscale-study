@@ -7,12 +7,12 @@ import type { PostRepository } from "../../domain/repositories/PostRepository";
 import type { UserRepository } from "../../domain/repositories/UserRepository";
 import type { AuthService } from "../../domain/services/AuthService";
 import type { CacheService } from "../../domain/services/CacheService";
+import type { Logger } from "../../domain/services/Logger";
 import type { RateLimitService } from "../../domain/services/RateLimitService";
 import { BcryptAuthService } from "../auth/BcryptAuthService";
+import { WinstonLogger } from "../logger/WinstonLogger";
 import { RedisRateLimitService } from "../rate-limit/RedisRateLimitService";
 import { container } from "./Container";
-import type { Logger } from "../../domain/services/Logger";
-import { WinstonLogger } from "../logger/WinstonLogger";
 
 export function registerServices(): void {
   // Repositories

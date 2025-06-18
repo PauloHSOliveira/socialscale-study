@@ -25,10 +25,7 @@ export function validateQuery<T>(schema: z.ZodSchema<T>) {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
       const result = schema.parse(req.query);
-      // Express query is always Record<string, string | string[] | undefined>
-      // After validation, we know it matches our schema T, but we need to preserve
-      // the Express query type structure for compatibility
-      Object.assign(req.query, result);
+      req.query = result as unknown as Record<string, string | string[] | undefined>;
       next();
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -43,26 +40,33 @@ export function validateQuery<T>(schema: z.ZodSchema<T>) {
   };
 }
 
-// Common validation schemas
+// Common validation schemas with username length limit
 export const signupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  username: z.string().min(3).max(20),
-  name: z.string().optional(),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(20, "Username must be at most 20 characters")
+    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+  name: z.string().min(1, "Name is required").optional(),
 });
 
 export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export const createPostSchema = z.object({
-  content: z.string().min(1).max(280),
+  content: z
+    .string()
+    .min(1, "Content is required")
+    .max(280, "Content must be at most 280 characters"),
 });
 
 export const updateProfileSchema = z.object({
-  name: z.string().optional(),
-  bio: z.string().max(160).optional(),
+  name: z.string().min(1, "Name is required").optional(),
+  bio: z.string().max(160, "Bio must be at most 160 characters").optional(),
 });
 
 export const paginationSchema = z.object({

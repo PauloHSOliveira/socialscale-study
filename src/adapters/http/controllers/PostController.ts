@@ -19,7 +19,7 @@ export class PostController extends BaseController {
   createPost = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const { content } = req.body;
-      
+
       if (!req.userId) {
         throw new UnauthorizedError("Authentication required");
       }
@@ -46,7 +46,7 @@ export class PostController extends BaseController {
   getUserPosts = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const userId = req.params.id;
-      
+
       if (!userId) {
         throw new ValidationError("User ID is required");
       }

@@ -15,4 +15,4 @@ export abstract class BaseController {
       res.status(500).json({ error: "Internal server error" });
     }
   }
-} 
+}

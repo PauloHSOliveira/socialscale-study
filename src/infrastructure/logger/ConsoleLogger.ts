@@ -16,4 +16,4 @@ export class ConsoleLogger implements Logger {
   debug(message: string, meta?: object): void {
     console.debug(`[DEBUG] ${message}`, meta ? JSON.stringify(meta) : "");
   }
-} 
+}

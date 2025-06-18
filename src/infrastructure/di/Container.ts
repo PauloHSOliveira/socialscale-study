@@ -3,7 +3,10 @@ type Factory<T> = () => T;
 
 export class Container {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private services = new Map<string | Constructor<unknown>, Constructor<unknown> | Factory<unknown>>();
+  private services = new Map<
+    string | Constructor<unknown>,
+    Constructor<unknown> | Factory<unknown>
+  >();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private singletons = new Map<string | Constructor<unknown>, unknown>();
 

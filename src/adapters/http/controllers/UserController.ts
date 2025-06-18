@@ -17,7 +17,7 @@ export class UserController extends BaseController {
   updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const { name, bio } = req.body;
-      
+
       if (!req.userId) {
         throw new UnauthorizedError("Authentication required");
       }
@@ -32,11 +32,11 @@ export class UserController extends BaseController {
   followUser = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const followingId = req.params.id;
-      
+
       if (!req.userId) {
         throw new UnauthorizedError("Authentication required");
       }
-      
+
       if (!followingId) {
         throw new ValidationError("User ID to follow is required");
       }

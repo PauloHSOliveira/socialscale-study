@@ -2,12 +2,15 @@ import express from "express";
 import { CreatePostUseCase } from "../../../application/use-cases/posts/CreatePostUseCase";
 import { GetPostsUseCase } from "../../../application/use-cases/posts/GetPostsUseCase";
 import { GetUserPostsUseCase } from "../../../application/use-cases/posts/GetUserPostsUseCase";
-import { container } from "../../../infrastructure/di/Container";
 import type { PostRepository } from "../../../domain/repositories/PostRepository";
 import type { CacheService } from "../../../domain/services/CacheService";
+import { container } from "../../../infrastructure/di/Container";
 import { PostController } from "../controllers/PostController";
 import { authMiddleware } from "../middleware/authMiddleware";
-import { expressPostRateLimiter, expressGeneralRateLimiter } from "../middleware/expressRateLimitMiddleware";
+import {
+  expressGeneralRateLimiter,
+  expressPostRateLimiter,
+} from "../middleware/expressRateLimitMiddleware";
 
 export function createPostRoutes(): express.Router {
   const router = express.Router();

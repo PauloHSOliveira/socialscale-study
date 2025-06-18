@@ -2,15 +2,15 @@ import express from "express";
 import { GetUserPostsUseCase } from "../../../application/use-cases/posts/GetUserPostsUseCase";
 import { FollowUserUseCase } from "../../../application/use-cases/users/FollowUserUseCase";
 import { UpdateProfileUseCase } from "../../../application/use-cases/users/UpdateProfileUseCase";
-import { container } from "../../../infrastructure/di/Container";
 import type { FollowRepository } from "../../../domain/repositories/FollowRepository";
 import type { PostRepository } from "../../../domain/repositories/PostRepository";
 import type { UserRepository } from "../../../domain/repositories/UserRepository";
+import { container } from "../../../infrastructure/di/Container";
 import { PostController } from "../controllers/PostController";
 import { UserController } from "../controllers/UserController";
+import { UserPostController } from "../controllers/UserPostController";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { expressGeneralRateLimiter } from "../middleware/expressRateLimitMiddleware";
-import { UserPostController } from "../controllers/UserPostController";
 
 export function createUserRoutes(): express.Router {
   const router = express.Router();
@@ -28,7 +28,12 @@ export function createUserRoutes(): express.Router {
 
   router.put("/profile", expressGeneralRateLimiter, authMiddleware, userController.updateProfile);
   router.post("/follow/:id", expressGeneralRateLimiter, authMiddleware, userController.followUser);
-  router.get("/:id/posts", expressGeneralRateLimiter, authMiddleware, userPostController.getUserPosts);
+  router.get(
+    "/:id/posts",
+    expressGeneralRateLimiter,
+    authMiddleware,
+    userPostController.getUserPosts,
+  );
 
   return router;
 }

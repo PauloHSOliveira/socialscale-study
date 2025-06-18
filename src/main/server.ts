@@ -2,8 +2,8 @@ import http from "node:http";
 import { disconnectRedis } from "../infrastructure/cache/RedisClient";
 import { environment } from "../infrastructure/config/Environment";
 import { disconnectDatabase } from "../infrastructure/database/PrismaClient";
-import { createApp } from "./app";
 import { logger } from "../infrastructure/logger/Logger";
+import { createApp } from "./app";
 
 async function startServer(): Promise<void> {
   try {

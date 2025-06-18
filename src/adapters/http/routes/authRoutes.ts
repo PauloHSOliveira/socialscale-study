@@ -1,9 +1,9 @@
 import express from "express";
 import { LoginUseCase } from "../../../application/use-cases/auth/LoginUseCase";
 import { SignupUseCase } from "../../../application/use-cases/auth/SignupUseCase";
-import { container } from "../../../infrastructure/di/Container";
-import type { AuthService } from "../../../domain/services/AuthService";
 import type { UserRepository } from "../../../domain/repositories/UserRepository";
+import type { AuthService } from "../../../domain/services/AuthService";
+import { container } from "../../../infrastructure/di/Container";
 import { AuthController } from "../controllers/AuthController";
 import {
   expressLoginRateLimiter,

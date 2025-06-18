@@ -1,7 +1,7 @@
+import type { Prisma } from "@prisma/client";
 import type { CreatePostData, Post, PostWithPagination } from "../../domain/entities/Post";
 import type { PostRepository } from "../../domain/repositories/PostRepository";
 import { getDatabaseClient } from "../../infrastructure/database/PrismaClient";
-import type { Prisma } from "@prisma/client";
 
 export class PrismaPostRepository implements PostRepository {
   private prisma = getDatabaseClient();

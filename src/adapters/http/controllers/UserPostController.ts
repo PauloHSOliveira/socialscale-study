@@ -12,7 +12,7 @@ export class UserPostController extends BaseController {
   getUserPosts = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
       const userId = req.params.id;
-      
+
       if (!userId) {
         throw new ValidationError("User ID is required");
       }
@@ -23,4 +23,4 @@ export class UserPostController extends BaseController {
       this.handleError(error, res);
     }
   };
-} 
+}
