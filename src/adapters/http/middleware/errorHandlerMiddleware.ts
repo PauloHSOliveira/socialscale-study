@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { logger } from "../../../infrastructure/logger/Logger";
 import { BaseError } from "../../../shared/errors/BaseError";
 
 interface PrismaError extends Error {
@@ -12,9 +13,7 @@ export const errorHandlerMiddleware = (
   res: Response,
   next: NextFunction,
 ): void => {
-  console.error("Error occurred:", {
-    message: error.message,
-    stack: error.stack,
+  logger.error("Error occurred:", error, {
     url: req.url,
     method: req.method,
     timestamp: new Date().toISOString(),
@@ -39,7 +38,7 @@ export const errorHandlerMiddleware = (
       });
       return;
     }
-    
+
     // Handle other Prisma errors
     res.status(400).json({
       error: "Database operation failed",

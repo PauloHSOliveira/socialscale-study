@@ -15,7 +15,6 @@ export class HealthController {
     };
 
     try {
-      // Check database connection
       await getDatabaseClient().$queryRaw`SELECT 1`;
       health.services.database = "healthy";
     } catch (error) {
@@ -24,7 +23,6 @@ export class HealthController {
     }
 
     try {
-      // Check Redis connection
       await getRedisClient().ping();
       health.services.cache = "healthy";
     } catch (error) {

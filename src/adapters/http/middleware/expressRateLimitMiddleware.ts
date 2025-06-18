@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
 import { getRedisClient } from "../../../infrastructure/cache/RedisClient";
+import { environment } from "../../../infrastructure/config/Environment";
 import type { AuthRequest } from "../../../shared/types/AuthRequest";
 
 type RedisReply = boolean | number | string | (boolean | number | string)[];
@@ -40,27 +41,27 @@ export function createExpressRateLimiter({
   });
 }
 
-// Export configured rate limiters
-export const expressSignupRateLimiter = createExpressRateLimiter({
-  windowMs: 60 * 1000,
-  max: 1000,
-  prefix: "signup",
-});
-
-export const expressLoginRateLimiter = createExpressRateLimiter({
-  windowMs: 60 * 1000,
-  max: 3000,
-  prefix: "login",
+// Scaled rate limiters for high load
+export const expressGeneralRateLimiter = createExpressRateLimiter({
+  windowMs: 30 * 1000,
+  max: environment.rateLimitGeneral,
+  prefix: "general",
 });
 
 export const expressPostRateLimiter = createExpressRateLimiter({
   windowMs: 30 * 1000,
-  max: 6000,
+  max: environment.rateLimitPost,
   prefix: "post",
 });
 
-export const expressGeneralRateLimiter = createExpressRateLimiter({
-  windowMs: 30 * 1000,
-  max: 3000,
-  prefix: "general",
+export const expressLoginRateLimiter = createExpressRateLimiter({
+  windowMs: 60 * 1000,
+  max: environment.rateLimitLogin,
+  prefix: "login",
+});
+
+export const expressSignupRateLimiter = createExpressRateLimiter({
+  windowMs: 60 * 1000,
+  max: environment.rateLimitSignup,
+  prefix: "signup",
 });

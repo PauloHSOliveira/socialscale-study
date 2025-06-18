@@ -7,8 +7,10 @@ import type { PostRepository } from "../../domain/repositories/PostRepository";
 import type { UserRepository } from "../../domain/repositories/UserRepository";
 import type { AuthService } from "../../domain/services/AuthService";
 import type { CacheService } from "../../domain/services/CacheService";
+import type { Logger } from "../../domain/services/Logger";
 import type { RateLimitService } from "../../domain/services/RateLimitService";
 import { BcryptAuthService } from "../auth/BcryptAuthService";
+import { createLogger } from "../logger/LoggerFactory";
 import { RedisRateLimitService } from "../rate-limit/RedisRateLimitService";
 import { container } from "./Container";
 
@@ -22,4 +24,7 @@ export function registerServices(): void {
   container.registerSingleton<CacheService>("CacheService", RedisCacheService);
   container.registerSingleton<AuthService>("AuthService", BcryptAuthService);
   container.registerSingleton<RateLimitService>("RateLimitService", RedisRateLimitService);
+
+  // Logger - Factory function registration
+  container.registerSingleton<Logger>("Logger", () => createLogger());
 }

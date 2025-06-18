@@ -2,17 +2,21 @@ import express from "express";
 import { CreatePostUseCase } from "../../../application/use-cases/posts/CreatePostUseCase";
 import { GetPostsUseCase } from "../../../application/use-cases/posts/GetPostsUseCase";
 import { GetUserPostsUseCase } from "../../../application/use-cases/posts/GetUserPostsUseCase";
-import { RedisCacheService } from "../../cache/RedisCacheService";
-import { PrismaPostRepository } from "../../db/PrismaPostRepository";
+import type { PostRepository } from "../../../domain/repositories/PostRepository";
+import type { CacheService } from "../../../domain/services/CacheService";
+import { container } from "../../../infrastructure/di/Container";
 import { PostController } from "../controllers/PostController";
 import { authMiddleware } from "../middleware/authMiddleware";
-import { generalRateLimiter, postRateLimiter } from "../middleware/rateLimiters";
+import {
+  expressGeneralRateLimiter,
+  expressPostRateLimiter,
+} from "../middleware/expressRateLimitMiddleware";
 
 export function createPostRoutes(): express.Router {
   const router = express.Router();
 
-  const postRepository = new PrismaPostRepository();
-  const cacheService = new RedisCacheService();
+  const postRepository = container.resolve<PostRepository>("PostRepository");
+  const cacheService = container.resolve<CacheService>("CacheService");
 
   const createPostUseCase = new CreatePostUseCase(postRepository);
   const getPostsUseCase = new GetPostsUseCase(postRepository, cacheService);
@@ -24,8 +28,8 @@ export function createPostRoutes(): express.Router {
     getUserPostsUseCase,
   );
 
-  router.post("/", postRateLimiter, authMiddleware, postController.createPost);
-  router.get("/", generalRateLimiter, postController.getPosts);
+  router.post("/", expressPostRateLimiter, authMiddleware, postController.createPost);
+  router.get("/", expressGeneralRateLimiter, postController.getPosts);
 
   return router;
 }

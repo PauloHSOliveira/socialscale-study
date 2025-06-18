@@ -13,14 +13,15 @@ export class GetPostsUseCase {
 
     const cached = await this.cacheService.get<PostWithPagination>(cacheKey);
     if (cached) {
-      console.log(`[CACHE HIT] ${cacheKey}`);
       return cached;
     }
 
-    console.log(`[CACHE MISS] ${cacheKey}`);
     const result = await this.postRepository.findWithPagination(limit, cursor);
 
-    await this.cacheService.set(cacheKey, result, 10);
+    // Extended cache TTL for better performance under load
+    const cacheTTL = cursor ? 120 : 60; // 2min for paginated, 1min for first page
+    await this.cacheService.set(cacheKey, result, cacheTTL);
+
     return result;
   }
 }

@@ -2,6 +2,7 @@ import http from "node:http";
 import { disconnectRedis } from "../infrastructure/cache/RedisClient";
 import { environment } from "../infrastructure/config/Environment";
 import { disconnectDatabase } from "../infrastructure/database/PrismaClient";
+import { logger } from "../infrastructure/logger/Logger";
 import { createApp } from "./app";
 
 async function startServer(): Promise<void> {
@@ -10,12 +11,12 @@ async function startServer(): Promise<void> {
     const server = http.createServer(app);
 
     server.listen(environment.port, () => {
-      console.log(`Server running at http://localhost:${environment.port}`);
-      console.log(`Process ${process.pid} is listening on port ${environment.port}`);
+      logger.info(`Server running at http://localhost:${environment.port}`);
+      logger.info(`Process ${process.pid} is listening on port ${environment.port}`);
     });
 
     process.on("SIGTERM", async () => {
-      console.log("SIGTERM received, shutting down gracefully...");
+      logger.info("SIGTERM received, shutting down gracefully...");
       server.close(async () => {
         await disconnectDatabase();
         await disconnectRedis();
@@ -23,7 +24,7 @@ async function startServer(): Promise<void> {
       });
     });
   } catch (error) {
-    console.error("Failed to start server:", error);
+    logger.error("Failed to start server:", error);
     process.exit(1);
   }
 }
