@@ -5,13 +5,16 @@ import type { GetUserPostsUseCase } from "../../../application/use-cases/posts/G
 import { UnauthorizedError } from "../../../shared/errors/UnauthorizedError";
 import { ValidationError } from "../../../shared/errors/ValidationError";
 import type { AuthRequest } from "../../../shared/types/AuthRequest";
+import { BaseController } from "./BaseController";
 
-export class PostController {
+export class PostController extends BaseController {
   constructor(
     private createPostUseCase: CreatePostUseCase,
     private getPostsUseCase: GetPostsUseCase,
     private getUserPostsUseCase: GetUserPostsUseCase,
-  ) {}
+  ) {
+    super();
+  }
 
   createPost = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
@@ -54,15 +57,4 @@ export class PostController {
       this.handleError(error, res);
     }
   };
-
-  private handleError(error: unknown, res: Response): void {
-    if (error instanceof ValidationError) {
-      res.status(400).json({ error: error.message });
-    } else if (error instanceof UnauthorizedError) {
-      res.status(401).json({ error: error.message });
-    } else {
-      console.error("Unexpected error:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  }
 }

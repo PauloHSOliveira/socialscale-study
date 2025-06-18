@@ -5,6 +5,7 @@ export interface EnvironmentConfig {
   redisHost: string;
   redisPort: number;
   nodeEnv: string;
+  logLevel: string;
 }
 
 export const environment: EnvironmentConfig = {
@@ -14,4 +15,5 @@ export const environment: EnvironmentConfig = {
   redisHost: process.env.REDIS_HOST || "localhost",
   redisPort: Number(process.env.REDIS_PORT) || 6379,
   nodeEnv: process.env.NODE_ENV || "development",
+  logLevel: process.env.LOG_LEVEL || "info",
 };

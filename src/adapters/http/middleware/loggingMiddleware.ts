@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
+import { logger } from "../../../infrastructure/logger/Logger";
 
 export const loggingMiddleware = (req: Request, res: Response, next: NextFunction) => {
   res.on("finish", () => {
-    console.log(`[${res.statusCode}] ${req.method} ${req.originalUrl}`);
+    logger.info(`[${res.statusCode}] ${req.method} ${req.originalUrl}`);
   });
   next();
 };

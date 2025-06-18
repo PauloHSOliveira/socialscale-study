@@ -11,6 +11,8 @@ import type { RateLimitService } from "../../domain/services/RateLimitService";
 import { BcryptAuthService } from "../auth/BcryptAuthService";
 import { RedisRateLimitService } from "../rate-limit/RedisRateLimitService";
 import { container } from "./Container";
+import type { Logger } from "../../domain/services/Logger";
+import { WinstonLogger } from "../logger/WinstonLogger";
 
 export function registerServices(): void {
   // Repositories
@@ -22,4 +24,7 @@ export function registerServices(): void {
   container.registerSingleton<CacheService>("CacheService", RedisCacheService);
   container.registerSingleton<AuthService>("AuthService", BcryptAuthService);
   container.registerSingleton<RateLimitService>("RateLimitService", RedisRateLimitService);
+
+  // Logger
+  container.registerSingleton<Logger>("Logger", WinstonLogger);
 }

@@ -1,10 +1,11 @@
 import type { NextFunction, Response } from "express";
-import { BcryptAuthService } from "../../../infrastructure/auth/BcryptAuthService";
+import { container } from "../../../infrastructure/di/Container";
+import type { AuthService } from "../../../domain/services/AuthService";
 import type { AuthRequest } from "../../../shared/types/AuthRequest";
 
-const authService = new BcryptAuthService();
-
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  const authService = container.resolve<AuthService>("AuthService");
+  
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ error: "No token provided" });

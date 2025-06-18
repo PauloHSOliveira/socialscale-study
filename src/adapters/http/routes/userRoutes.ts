@@ -2,41 +2,33 @@ import express from "express";
 import { GetUserPostsUseCase } from "../../../application/use-cases/posts/GetUserPostsUseCase";
 import { FollowUserUseCase } from "../../../application/use-cases/users/FollowUserUseCase";
 import { UpdateProfileUseCase } from "../../../application/use-cases/users/UpdateProfileUseCase";
-import { RedisCacheService } from "../../cache/RedisCacheService";
-import { PrismaFollowRepository } from "../../db/PrismaFollowRepository";
-import { PrismaPostRepository } from "../../db/PrismaPostRepository";
-import { PrismaUserRepository } from "../../db/PrismaUserRepository";
+import { container } from "../../../infrastructure/di/Container";
+import type { FollowRepository } from "../../../domain/repositories/FollowRepository";
+import type { PostRepository } from "../../../domain/repositories/PostRepository";
+import type { UserRepository } from "../../../domain/repositories/UserRepository";
 import { PostController } from "../controllers/PostController";
 import { UserController } from "../controllers/UserController";
 import { authMiddleware } from "../middleware/authMiddleware";
-import { generalRateLimiter } from "../middleware/rateLimiters";
-import { ValidationError } from "../../../shared/errors/ValidationError";
-import type { Response } from "express";
-import type { AuthRequest } from "../../../shared/types/AuthRequest";
-import { GetPostsUseCase } from "../../../application/use-cases/posts/GetPostsUseCase";
-import { CreatePostUseCase } from "../../../application/use-cases/posts/CreatePostUseCase";
+import { expressGeneralRateLimiter } from "../middleware/expressRateLimitMiddleware";
+import { UserPostController } from "../controllers/UserPostController";
 
 export function createUserRoutes(): express.Router {
   const router = express.Router();
 
-  const userRepository = new PrismaUserRepository();
-  const followRepository = new PrismaFollowRepository();
-  const postRepository = new PrismaPostRepository();
-  const cacheService = new RedisCacheService();
+  const userRepository = container.resolve<UserRepository>("UserRepository");
+  const followRepository = container.resolve<FollowRepository>("FollowRepository");
+  const postRepository = container.resolve<PostRepository>("PostRepository");
 
   const updateProfileUseCase = new UpdateProfileUseCase(userRepository);
   const followUserUseCase = new FollowUserUseCase(followRepository);
   const getUserPostsUseCase = new GetUserPostsUseCase(postRepository);
-  const createPostUseCase = new CreatePostUseCase(postRepository);
-  const getPostsUseCase = new GetPostsUseCase(postRepository, cacheService);
 
   const userController = new UserController(updateProfileUseCase, followUserUseCase);
-  const postController = new PostController(createPostUseCase, getPostsUseCase, getUserPostsUseCase);
-  
+  const userPostController = new UserPostController(getUserPostsUseCase);
 
-  router.put("/profile", generalRateLimiter, authMiddleware, userController.updateProfile);
-  router.post("/follow/:id", generalRateLimiter, authMiddleware, userController.followUser);
-  router.get("/:id/posts", generalRateLimiter, authMiddleware, postController.getUserPosts);
+  router.put("/profile", expressGeneralRateLimiter, authMiddleware, userController.updateProfile);
+  router.post("/follow/:id", expressGeneralRateLimiter, authMiddleware, userController.followUser);
+  router.get("/:id/posts", expressGeneralRateLimiter, authMiddleware, userPostController.getUserPosts);
 
   return router;
 }
